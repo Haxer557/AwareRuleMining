@@ -1,0 +1,28 @@
+@relation aware.symbolic
+
+@attribute day_of_week {DOW_MONDAY, DOW_TUESDAY, DOW_WEDNESDAY, DOW_THURSDAY, DOW_FRIDAY, DOW_SATURDAY, DOW_SUNDAY}
+@attribute time >>>TIME<<<
+@attribute application >>>APPLICATION<<<
+@attribute is_system_app {TRUE, FALSE}
+@attribute music {TRUE, FALSE}
+@attribute headphones {TRUE, FALSE}
+@attribute ringer_mode {RM_NORMAL, RM_SILENT, RM_VIBRATE}
+@attribute media_level {VL_NONE, VL_LOW, VL_MEDIUM, VL_HIGH}
+@attribute ringtone_level {VL_NONE, VL_LOW, VL_MEDIUM, VL_HIGH}
+@attribute battery_status {BS_CHARGING, BS_DISCHARGING, BS_FULL, BS_NOT_CHARGING, BS_UNKNOWN, BS_SHUTDOWN, BS_REBOOTED}
+@attribute battery_level {BL_VERY_LOW, BL_LOW, BL_MEDIUM, BL_HIGH, BL_FULL}
+@attribute google_activity >>>GOOGLE_ACTIVITY<<<
+@attribute network_enabled {TRUE, FALSE}
+@attribute location >>>LOCATION<<<
+@attribute network_type {NT_AIRPLANE, NT_WIFI, NT_BLUETOOTH, NT_GPS, NT_MOBILE, NT_WIMAX}
+@attribute sent_data {TV_VERY_LOW, TV_LOW, TV_MEDIUM, TV_HIGH, TV_VERY_HIGH}
+@attribute received_data {TV_VERY_LOW, TV_LOW, TV_MEDIUM, TV_HIGH, TV_VERY_HIGH}
+@attribute screen_status {SS_OFF, SS_ON, SS_LOCKED, SS_UNLOCKED}
+@attribute temperature {TL_VERY_HOT, TL_HOT, TL_COOL, TL_COLD, TL_FREEZING}
+@attribute humidity {HL_WET, HL_AVERAGE, HL_DRY}
+@attribute pressure {PL_VERY_HIGH, PL_HIGH, PL_NORMAL, PL_LOW, PL_VERY_LOW}
+@attribute wind_strength {WS_WEAK, WS_STRONG, WS_VERY_STRONG}
+@attribute wind_direction {WD_N, WD_NE, WD_E, WD_SE, WD_S, WD_SW, WD_W, WD_NW}
+@attribute rain_value {RV_NONE, RV_MIST, RV_RAIN, RV_STORM}
+
+@data
