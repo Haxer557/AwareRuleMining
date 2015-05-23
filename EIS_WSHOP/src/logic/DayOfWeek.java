@@ -32,4 +32,25 @@ public enum DayOfWeek {
 			return null;
 		}
     }
+    
+    public static DayOfWeek stringToDayOfWeek(String string) {
+    	switch (string) {
+		case "DOW_MONDAY":
+			return DOW_MONDAY;
+		case "DOW_TUESDAY":
+			return DOW_TUESDAY;
+		case "DOW_WEDNESDAY":
+			return DOW_WEDNESDAY;
+		case "DOW_THURSDAY":
+			return DOW_THURSDAY;
+		case "DOW_FRIDAY":
+			return DOW_FRIDAY;
+		case "DOW_SATURDAY":
+			return DOW_SATURDAY;
+		case "DOW_SUNDAY":
+			return DOW_SUNDAY;
+		default:
+			return null;
+		}
+    }
 }

@@ -29,14 +29,13 @@ public class WekaWriter {
 		headers = headers.replace(">>>LOCATION<<<", getLocationValues(dataSets));
 		String output = headers.replace(">>>GOOGLE_ACTIVITY<<<", getGoogleActivityValues(dataSets));
 		
-		for (DataSet dataSet : dataSets) {
-			output += dataSet.toString() + "\r\n";
-		}
-		
 		BufferedWriter writer = null;
 		try {
 			writer = new BufferedWriter( new FileWriter(Configuration.getInstance().outputFile));
 			writer.write(output);
+			for (DataSet dataSet : dataSets) {
+				writer.append(dataSet.toString() + "\r\n");
+			}
 		}
 		catch ( IOException e) {}
 		finally {

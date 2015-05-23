@@ -12,8 +12,8 @@
 @attribute battery_status {BS_CHARGING, BS_DISCHARGING, BS_FULL, BS_NOT_CHARGING, BS_UNKNOWN, BS_SHUTDOWN, BS_REBOOTED}
 @attribute battery_level {BL_VERY_LOW, BL_LOW, BL_MEDIUM, BL_HIGH, BL_FULL}
 @attribute google_activity >>>GOOGLE_ACTIVITY<<<
-@attribute network_enabled {TRUE, FALSE}
 @attribute location >>>LOCATION<<<
+@attribute network_enabled {TRUE, FALSE}
 @attribute network_type {NT_AIRPLANE, NT_WIFI, NT_BLUETOOTH, NT_GPS, NT_MOBILE, NT_WIMAX}
 @attribute sent_data {TV_VERY_LOW, TV_LOW, TV_MEDIUM, TV_HIGH, TV_VERY_HIGH}
 @attribute received_data {TV_VERY_LOW, TV_LOW, TV_MEDIUM, TV_HIGH, TV_VERY_HIGH}

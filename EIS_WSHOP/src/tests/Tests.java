@@ -1,18 +1,14 @@
 package tests;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import logic.Configuration;
 import logic.DataSet;
-import logic.DayOfWeek;
 import logic.FullProcessing;
-import logic.TimeSpan;
 import logic.WekaWriter;
 import logic.dbscan.DbScan;
-import logic.dbscan.PointDB;
 import logic.modelCalculators.ApplicationForegroundCalculator;
 import logic.modelCalculators.AudioStateCalculator;
 import logic.modelCalculators.BatteryCalculator;
@@ -64,22 +60,6 @@ public class Tests {
 		System.out.println("Pobieranie urz¹dzeñ...");
 		List<Device> devices = new DeviceRepository().getAll();
 		for (Device device : devices) {
-			List<TimeSpan> where = new LinkedList<>();
-			where.add(new TimeSpan(DayOfWeek.DOW_MONDAY));
-			where.add(new TimeSpan(DayOfWeek.DOW_TUESDAY));
-			where.add(new TimeSpan(DayOfWeek.DOW_WEDNESDAY));
-			where.add(new TimeSpan(DayOfWeek.DOW_THURSDAY));
-			where.add(new TimeSpan(DayOfWeek.DOW_FRIDAY));
-			where.add(new TimeSpan(DayOfWeek.DOW_SATURDAY));
-			where.add(new TimeSpan(DayOfWeek.DOW_SUNDAY));
-			List<TimeSpan> groupBy = new LinkedList<>();
-			groupBy.add(new TimeSpan(null, 0, 3*3600+59*60+59));
-			groupBy.add(new TimeSpan(null, 3*3600, 7*3600+59*60+59));
-			groupBy.add(new TimeSpan(null, 8*3600, 11*3600+59*60+59));
-			groupBy.add(new TimeSpan(null, 12*3600, 15*3600+59*60+59));
-			groupBy.add(new TimeSpan(null, 16*3600, 19*3600+59*60+59));
-			groupBy.add(new TimeSpan(null, 20*3600, 23*3600+59*60+59));
-			
 			LocationRepository lRepo = new LocationRepository();
 			System.out.println("Pobieranie danych o lokalizacjach...");
 			List<Location> ls = lRepo.getAllByDevice(device);
@@ -87,7 +67,7 @@ public class Tests {
 			System.out.println("Klasteryzacja danych o lokalizacjach...");
 			DbScan.dbScan(ls, minMaxes, Configuration.getInstance().dbscanEps, 	Configuration.getInstance().dbscanMinNeighbours);
 			System.out.println("Przetwarzanie danych o lokalizacjach..");
-			List<LocationModel> lModels = new FullProcessing<Location, LocationModel>().process(ls, new LocationCalculator(), where, groupBy);
+			List<LocationModel> lModels = new FullProcessing<Location, LocationModel>().process(ls, new LocationCalculator(), Configuration.getInstance().whereFilter, Configuration.getInstance().groupByFilter);
 			
 			System.out.println("Pobieranie danych o aplikacjach...");
 			List<ApplicationForeground> afs = new ApplicationForegroudRepository().getAllByDevice(device);
@@ -107,21 +87,21 @@ public class Tests {
 			List<WeatherCurrent> wcs = new WeatherCurrentRepository().getAllByDevice(device);
 			
 			System.out.println("Przetwarzanie danych o aplikacjach...");
-			List<ApplicationForegroundModel> afModels = new FullProcessing<ApplicationForeground, ApplicationForegroundModel>().process(afs, new ApplicationForegroundCalculator(), where, groupBy);
+			List<ApplicationForegroundModel> afModels = new FullProcessing<ApplicationForeground, ApplicationForegroundModel>().process(afs, new ApplicationForegroundCalculator(), Configuration.getInstance().whereFilter, Configuration.getInstance().groupByFilter);
 			System.out.println("Przetwarzanie danych audio...");
-			List<AudioStateModel> asModels = new FullProcessing<AudioState, AudioStateModel>().process(ass, new AudioStateCalculator(), where, groupBy);
+			List<AudioStateModel> asModels = new FullProcessing<AudioState, AudioStateModel>().process(ass, new AudioStateCalculator(), Configuration.getInstance().whereFilter, Configuration.getInstance().groupByFilter);
 			System.out.println("Przetwarzanie danych o baterii...");
-			List<BatteryModel> bModels = new FullProcessing<Battery, BatteryModel>().process(bs, new BatteryCalculator(), where, groupBy);
+			List<BatteryModel> bModels = new FullProcessing<Battery, BatteryModel>().process(bs, new BatteryCalculator(), Configuration.getInstance().whereFilter, Configuration.getInstance().groupByFilter);
 			System.out.println("Przetwarzanie danych o aktywnoœci Google...");
-			List<GoogleActivityModel> gaModels = new FullProcessing<GoogleActivity, GoogleActivityModel>().process(gas, new GoogleActivityCalculator(), where, groupBy);
+			List<GoogleActivityModel> gaModels = new FullProcessing<GoogleActivity, GoogleActivityModel>().process(gas, new GoogleActivityCalculator(), Configuration.getInstance().whereFilter, Configuration.getInstance().groupByFilter);
 			System.out.println("Przetwarzanie danych o sieci...");
-			List<NetworkModel> nModels = new FullProcessing<Network, NetworkModel>().process(ns, new NetworkCalculator(), where, groupBy);
+			List<NetworkModel> nModels = new FullProcessing<Network, NetworkModel>().process(ns, new NetworkCalculator(), Configuration.getInstance().whereFilter, Configuration.getInstance().groupByFilter);
 			System.out.println("Przetwarzanie danych o transferze danych...");
-			List<NetworkTrafficModel> ntModels = new FullProcessing<NetworkTraffic, NetworkTrafficModel>().process(nts, new NetworkTrafficCalculator(), where, groupBy);
+			List<NetworkTrafficModel> ntModels = new FullProcessing<NetworkTraffic, NetworkTrafficModel>().process(nts, new NetworkTrafficCalculator(), Configuration.getInstance().whereFilter, Configuration.getInstance().groupByFilter);
 			System.out.println("Przetwarzanie danych o wyœwietlaczu...");
-			List<ScreenModel> sModels = new FullProcessing<Screen, ScreenModel>().process(ss, new ScreenCalculator(), where, groupBy);
+			List<ScreenModel> sModels = new FullProcessing<Screen, ScreenModel>().process(ss, new ScreenCalculator(), Configuration.getInstance().whereFilter, Configuration.getInstance().groupByFilter);
 			System.out.println("Przetwarzanie danych o pogodzie...");
-			List<WeatherModel> wModels = new FullProcessing<WeatherCurrent, WeatherModel>().process(wcs, new WeatherCalculator(), where, groupBy);
+			List<WeatherModel> wModels = new FullProcessing<WeatherCurrent, WeatherModel>().process(wcs, new WeatherCalculator(), Configuration.getInstance().whereFilter, Configuration.getInstance().groupByFilter);
 			
 			System.out.println("Generowanie zbiorów danych...");
 			Map<Long, DataSet> dataSets =  new HashMap<>();

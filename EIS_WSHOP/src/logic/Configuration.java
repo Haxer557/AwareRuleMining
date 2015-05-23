@@ -2,6 +2,8 @@ package logic;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import model.BatteryLevel;
@@ -31,9 +33,9 @@ public class Configuration {
 	
 	//config values
 	public long singleTimeSpan;
-	public int longitudeMapSize;
-	public int latitudeMapSize;
 	public String outputFile;
+	public List<TimeSpan> whereFilter;
+	public List<TimeSpan> groupByFilter;
 	//db
 	public String databaseUrl;
 	public String username;
@@ -41,7 +43,10 @@ public class Configuration {
 	//dbscan
 	public double dbscanEps;
 	public int dbscanMinNeighbours;
+	public int longitudeMapSize;
+	public int latitudeMapSize;
 	
+	//thresholds
 	public Map<BatteryLevel, Double> batteryLevelThresholds;
 	public Map<HumidityLevel, Double> humidityThresholds;
 	public Map<TrafficValue, Long> trafficThresholds;
@@ -103,6 +108,22 @@ public class Configuration {
 		rainThresholds = new HashMap<>();
 		rainThresholds.put(RainValue.RV_MIST, 1.0);
 		rainThresholds.put(RainValue.RV_RAIN, 5.0);
+		
+		whereFilter = new LinkedList<>();
+		whereFilter.add(new TimeSpan(DayOfWeek.DOW_MONDAY));
+		whereFilter.add(new TimeSpan(DayOfWeek.DOW_TUESDAY));
+		whereFilter.add(new TimeSpan(DayOfWeek.DOW_WEDNESDAY));
+		whereFilter.add(new TimeSpan(DayOfWeek.DOW_THURSDAY));
+		whereFilter.add(new TimeSpan(DayOfWeek.DOW_FRIDAY));
+		whereFilter.add(new TimeSpan(DayOfWeek.DOW_SATURDAY));
+		whereFilter.add(new TimeSpan(DayOfWeek.DOW_SUNDAY));
+		groupByFilter = new LinkedList<>();
+		groupByFilter.add(new TimeSpan(null, 0, 3*3600+59*60+59));
+		groupByFilter.add(new TimeSpan(null, 3*3600, 7*3600+59*60+59));
+		groupByFilter.add(new TimeSpan(null, 8*3600, 11*3600+59*60+59));
+		groupByFilter.add(new TimeSpan(null, 12*3600, 15*3600+59*60+59));
+		groupByFilter.add(new TimeSpan(null, 16*3600, 19*3600+59*60+59));
+		groupByFilter.add(new TimeSpan(null, 20*3600, 23*3600+59*60+59));
 	}
 	
 	private void readConfig() throws IOException {
@@ -162,5 +183,42 @@ public class Configuration {
 		rainThresholds = new HashMap<>();
 		rainThresholds.put(RainValue.RV_MIST, properties.getDouble("THRESHOLD_RV_MIST"));
 		rainThresholds.put(RainValue.RV_RAIN, properties.getDouble("THRESHOLD_RV_RAIN"));
+		
+		whereFilter = new LinkedList<>();
+		String whereString = properties.getString("whereFilter");
+		whereFilter = parseTimeSpanList(whereString);
+		groupByFilter = new LinkedList<>();
+		String groupByString = properties.getString("groupByFilter");
+		groupByFilter = parseTimeSpanList(groupByString);
+	}
+	
+	private List<TimeSpan> parseTimeSpanList(String filterString) {
+		//TODO: validation regex
+		List<TimeSpan> timeSpans = new LinkedList<>();
+		String[] timeSpanStrings = filterString.split(",");
+		for (String timeSpanString : timeSpanStrings) {
+			timeSpans.add(parseTimeSpan(timeSpanString));
+		}
+		return timeSpans;
+	}
+	
+	private TimeSpan parseTimeSpan(String timeSpanString) {
+		timeSpanString = timeSpanString.substring(1, timeSpanString.length()-1);
+		String[] timeSpanParameters = timeSpanString.split("@");
+		DayOfWeek dayOfWeek = DayOfWeek.stringToDayOfWeek(timeSpanParameters[0]);
+		if(timeSpanParameters.length == 1 || timeSpanParameters[1].isEmpty())
+			return new TimeSpan(dayOfWeek);
+		String[] timeStrings = timeSpanParameters[1].split("-");
+		int startTime = parseTime(timeStrings[0]);
+		int endTime = parseTime(timeStrings[1]);
+		return new TimeSpan(dayOfWeek, startTime, endTime);
+	}
+	
+	private int parseTime(String timeString) {
+		String[] timeParts = timeString.split(":");
+		int hours = Integer.parseInt(timeParts[0]);
+		int minutes = Integer.parseInt(timeParts[1]);
+		int seconds = Integer.parseInt(timeParts[2]);
+		return hours * 3600 + minutes * 60 + seconds;
 	}
 }
