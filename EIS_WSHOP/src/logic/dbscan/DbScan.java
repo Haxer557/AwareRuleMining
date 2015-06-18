@@ -2,6 +2,8 @@ package logic.dbscan;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import logic.Configuration;
 
@@ -16,6 +18,7 @@ public class DbScan {
 	static int regionQueries = 0;
 	static int allCount = 0;
 	static double lastPercentage = 0.0;
+	static final String noiseClusterName = "NONE";
 	
 	public static List<PointDB> dbScan(List<Location> locations, double[] minMaxes, double eps, int minPoints) {
 		System.out.println("DBSCAN: Inicjalizacja...");
@@ -31,7 +34,7 @@ public class DbScan {
 			point.setVisited(true);
 			List<PointDB> neighbours = naiveRegionQuery(map, point, eps);
 			if(neighbours.size() < minPoints)
-				point.setCluster("NONE");
+				point.setCluster(noiseClusterName);
 			else {
 				expandCluster(map, point, neighbours, currentCluster, eps, minPoints);
 				currentCluster++;
@@ -39,6 +42,10 @@ public class DbScan {
 		}
 		System.out.println("DBSCAN: Klasteryzacja ukoñczona!");
 		System.out.println("DBSCAN: Zidentyfikowano " + currentCluster + " klastrów.");
+		Map<String, String> links = OsmLinkGenerator.generateLinksToClusters(points);
+		for (Entry<String, String> linkEntry : links.entrySet()) {
+			System.out.println(linkEntry.getKey() + ": " + linkEntry.getValue());
+		}
 		return points;
 	}
 	
